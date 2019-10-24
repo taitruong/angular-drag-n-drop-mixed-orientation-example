@@ -6,7 +6,7 @@
             let dummy of ' '.repeat(items.length).split('');
             let index = index
          ">
-		<div fxFlex="grow" *ngIf="getTableRow(itemRow, index).length > 0"
+		<div *ngIf="getTableRow(itemRow, index).length > 0"
          cdkDropList
          cdkDropListOrientation="horizontal"
 			   [cdkDropListData]="getTableRow(itemRow, index)"

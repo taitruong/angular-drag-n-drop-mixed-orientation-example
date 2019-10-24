@@ -27,13 +27,6 @@ export class AppComponent {
     return [];
   }
 
-  updateItemTable() {
-    let index = 0;
-    this.itemTable = this.itemTable.map(row =>
-      row.map(articleFormGroup => this.items[index++])
-    );
-  }
-
   getColumnSize(articleRowElement: Element, index: number): number {
     const { width } = articleRowElement.getBoundingClientRect();
     const columnSize = (width - (width % this.boxWidth)) / this.boxWidth;
@@ -66,4 +59,12 @@ export class AppComponent {
 
     this.updateItemTable();
   }
+
+  updateItemTable() {
+    let index = 0;
+    this.itemTable = this.itemTable.map(row =>
+      row.map(articleFormGroup => this.items[index++])
+    );
+  }
+
 }
