@@ -7,18 +7,18 @@ import { CdkDragDrop, moveItemInArray } from "@angular/cdk/drag-drop";
   styleUrls: ["./app.component.css"]
 })
 export class AppComponent {
+  // width 150px + 5px margin
   boxWidth = 155;
-  items: Array<number> = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-  itemTable: Array<number[]> = new Array(this.items.length);;
+  items: Array<string> = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
+  itemTable: Array<string[]> = new Array(this.items.length);
 
-  getTableRow(articleRowElement: Element, index: number): number[] {
+  getTableRow(articleRowElement: Element, index: number): string[] {
     const columnSize = this.getColumnSize(articleRowElement, index);
     const column = index % columnSize;
     if (column == 0) {
       const row = this.getRow(index, columnSize);
       let data = this.itemTable[row];
       if (!data) {
-
         data = this.items.slice(row * columnSize, (row + 1) * columnSize);
         this.itemTable[row] = data;
       }
@@ -36,9 +36,7 @@ export class AppComponent {
 
   getColumnSize(articleRowElement: Element, index: number): number {
     const { width } = articleRowElement.getBoundingClientRect();
-    console.log('>>> total width', width);
     const columnSize = (width - (width % this.boxWidth)) / this.boxWidth;
-    console.log('>>>> column size', columnSize);
     return columnSize;
   }
 
@@ -47,28 +45,24 @@ export class AppComponent {
     return (index - column) / columnSize;
   }
 
-  reorderDroppedList(event: CdkDragDrop<number[]>) {
+  reorderDroppedItem(event: CdkDragDrop<string[]>) {
     const { previousIndex, currentIndex } = event;
 
-    const previousFormGroup = event.previousContainer.data[previousIndex];
-    const currentFormGroup =
-      currentIndex < event.container.data.length
-        ? event.container.data[currentIndex]
-        : event.container.data[currentIndex - 1];
+    const previousRowItem = event.previousContainer.data[previousIndex];
+    const currentRowItem =
+      event.container.data[currentIndex - 1];
 
-    const previousSortIndex = this.items.indexOf(previousFormGroup);
-    let currentSortIndex =
-      currentIndex < event.container.data.length
-        ? this.items.indexOf(currentFormGroup)
-        : this.items.indexOf(currentFormGroup) + 1;
+    const previousItemsIndex = this.items.indexOf(previousRowItem);
+    let currentItemsIndex =
+      this.items.indexOf(currentRowItem) + 1;
     if (
-      previousSortIndex < currentSortIndex &&
+      previousItemsIndex < currentItemsIndex &&
       event.previousContainer != event.container
     ) {
-      currentSortIndex--;
+      currentItemsIndex--;
     }
 
-    moveItemInArray(this.items, previousIndex, currentIndex);
+    moveItemInArray(this.items, previousItemsIndex, currentItemsIndex);
 
     this.updateItemTable();
   }

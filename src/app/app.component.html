@@ -1,3 +1,6 @@
+<div fxLayout="row">
+  <h3>Items: {{items}}</h3>
+</div>
 <div #itemRow fxLayout="row wrap" cdkDropListGroup>
 	<div *ngFor="
             let dummy of ' '.repeat(items.length).split('');
@@ -8,19 +11,12 @@
          cdkDropListOrientation="horizontal"
 			   [cdkDropListData]="getTableRow(itemRow, index)"
          (cdkDropListDropped)="reorderDroppedItem($event)">
-         {{index}}
-			<div fxLayoutAlign="center center"
-           class="item-box"
+			<div fxFlex="grow"
            *ngFor="let item of getTableRow(itemRow, index)" 
            cdkDrag>
 				<div class="drag-placeholder" *cdkDragPlaceholder></div>
-				{{item}}
+        <div fxLayoutAlign="center center" class="item-box">{{item}}</div>
 			</div>
 		</div>
 	</div>
-</div>
-<div fxLayout="row">
-  <div fxFlex="grow">a</div>
-  <div fxFlex="grow">b</div>
-  <div fxFlex="grow">c</div>
 </div>
