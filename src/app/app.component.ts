@@ -9,10 +9,10 @@ import { CdkDragDrop, moveItemInArray } from "@angular/cdk/drag-drop";
 export class AppComponent {
   // width 150px + 5px margin
   boxWidth = 155;
-  items: Array<string> = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
-  itemTable: Array<string[]> = new Array(this.items.length);
+  items: Array<number> = Array.from({length:20}, (v, k) => k + 1);
+  itemTable: Array<number[]> = new Array(this.items.length);
 
-  getTableRow(articleRowElement: Element, index: number): string[] {
+  getTableRow(articleRowElement: Element, index: number): number[] {
     const columnSize = this.getColumnSize(articleRowElement, index);
     const column = index % columnSize;
     if (column == 0) {
@@ -38,7 +38,7 @@ export class AppComponent {
     return (index - column) / columnSize;
   }
 
-  reorderDroppedItem(event: CdkDragDrop<string[]>) {
+  reorderDroppedItem(event: CdkDragDrop<number[]>) {
     const { previousIndex, currentIndex } = event;
 
     const previousRowItem = event.previousContainer.data[previousIndex];
