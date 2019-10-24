@@ -12,8 +12,8 @@ export class AppComponent {
   items: Array<number> = Array.from({length:20}, (v, k) => k + 1);
   itemTable: Array<number[]> = new Array(this.items.length);
 
-  getTableRow(articleRowElement: Element, index: number): number[] {
-    const columnSize = this.getColumnSize(articleRowElement, index);
+  getTableRow(itemRow: Element, index: number): number[] {
+    const columnSize = this.getColumnSize(itemRow, index);
     const column = index % columnSize;
     if (column == 0) {
       const row = this.getRow(index, columnSize);
@@ -27,8 +27,8 @@ export class AppComponent {
     return [];
   }
 
-  getColumnSize(articleRowElement: Element, index: number): number {
-    const { width } = articleRowElement.getBoundingClientRect();
+  getColumnSize(itemRowElement: Element, index: number): number {
+    const { width } = itemRowElement.getBoundingClientRect();
     const columnSize = (width - (width % this.boxWidth)) / this.boxWidth;
     return columnSize;
   }
@@ -63,7 +63,7 @@ export class AppComponent {
   updateItemTable() {
     let index = 0;
     this.itemTable = this.itemTable.map(row =>
-      row.map(articleFormGroup => this.items[index++])
+      row.map(_ => this.items[index++])
     );
   }
 
