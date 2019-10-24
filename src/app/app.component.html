@@ -1,4 +1,26 @@
-<hello name="{{ name }}"></hello>
-<p>
-  Start editing to see some magic happen :)
-</p>
+<div #itemRow fxLayout="row wrap" cdkDropListGroup>
+	<div *ngFor="
+            let dummy of ' '.repeat(items.length).split('');
+            let index = index
+         ">
+		<div fxFlex="grow" *ngIf="getTableRow(itemRow, index).length > 0"
+         cdkDropList
+         cdkDropListOrientation="horizontal"
+			   [cdkDropListData]="getTableRow(itemRow, index)"
+         (cdkDropListDropped)="reorderDroppedItem($event)">
+         {{index}}
+			<div fxLayoutAlign="center center"
+           class="item-box"
+           *ngFor="let item of getTableRow(itemRow, index)" 
+           cdkDrag>
+				<div class="drag-placeholder" *cdkDragPlaceholder></div>
+				{{item}}
+			</div>
+		</div>
+	</div>
+</div>
+<div fxLayout="row">
+  <div fxFlex="grow">a</div>
+  <div fxFlex="grow">b</div>
+  <div fxFlex="grow">c</div>
+</div>

@@ -1,3 +1,10 @@
-p {
-  font-family: Lato;
+.item-box {
+  width: 150px;
+  height: 150px;
+  border: solid 3px #ccc;
+  background: #fff;
+  font-size: 30pt;
+  font-weight: bold;
+  border-radius: 5px;
+  margin: 0px 0px 5px 5px;
 }
