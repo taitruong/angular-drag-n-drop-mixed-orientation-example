@@ -1,5 +1,9 @@
 import { Component } from "@angular/core";
-import { CdkDragDrop, moveItemInArray } from "@angular/cdk/drag-drop";
+import {
+  CdkDragDrop,
+  moveItemInArray,
+  transferArrayItem
+} from "@angular/cdk/drag-drop";
 
 @Component({
   selector: "my-app",
@@ -31,40 +35,39 @@ export class AppComponent {
           Array(columnSize) // always fills to end of column size, therefore...
             .fill("")
             .map(_ => copy.shift())
-            .filter(item => !!item) // ... we need to remove the empty items
+            .filter(item => !!item) // ... we need to remove empty items
       );
     return this.tableRows;
   }
 
   reorderDroppedItem(event: CdkDragDrop<number[]>) {
-    // reorder on items array for that we need to calculate items indices
-    // based on indices poiting to rows (data and previous data containers)
-    const { previousIndex, currentIndex } = event;
+    // clone table, since it needs to be re-initialized after dropping
+    let copyTableRows = this.tableRows.map(_ => _.map(_ => _));
 
-    // get the items from the rows
-    const previousRowItem = event.previousContainer.data[previousIndex];
-    const currentRowItem = event.container.data[currentIndex - 1]; // currentIndex - 1: when dragging to end of row then current index is equal to row length
-
-    // get item indices based on items
-    const previousItemsIndex = this.items.indexOf(previousRowItem);
-    let currentItemsIndex = this.items.indexOf(currentRowItem);
-    if (event.previousContainer == event.container) {
-      // increment in case of same row, keep decremented when in another row
-      currentItemsIndex++;
-    } else if (previousItemsIndex > currentItemsIndex) {
-      // increment in case of different rows AND dragging back (prev > curr), keep decremented when in another row
-      currentItemsIndex++;
+    // drop item
+    if (event.previousContainer === event.container) {
+      moveItemInArray(
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex
+      );
+    } else {
+      transferArrayItem(
+        event.previousContainer.data,
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex
+      );
     }
 
-    // move item from previous to current index
-    moveItemInArray(this.items, previousItemsIndex, currentItemsIndex);
+    // update items after drop
+    this.items = this.tableRows.reduce((previous, current) =>
+      previous.concat(current)
+    );
 
-    this.updateTableRows();
-  }
-
-  updateTableRows() {
+    // re-initialize table
     let index = 0;
-    this.tableRows = this.tableRows.map(row =>
+    this.tableRows = copyTableRows.map(row =>
       row.map(_ => this.items[index++])
     );
   }
