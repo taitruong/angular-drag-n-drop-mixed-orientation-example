@@ -3,16 +3,17 @@
 </div>
 <div #rowLayout fxLayout="row wrap" cdkDropListGroup>
   <!-- based on row layout's width and item box width, columns per row can be calculated and a item table matrix is initialized-->
-	<div *ngFor="let tableRow of getTableRows(rowLayout)"
-         cdkDropList
-         cdkDropListOrientation="horizontal"
-			   [cdkDropListData]="tableRow"
-         (cdkDropListDropped)="reorderDroppedItem($event)"><!-- drop reorders items and recalculates table matrix-->
-			<div fxFlex="grow"
-           *ngFor="let item of tableRow" 
-           cdkDrag>
-				<div class="drag-placeholder" *cdkDragPlaceholder></div>
-        <div fxLayoutAlign="center center" class="item-box">{{item}}</div>
-			</div>
-	</div>
+  <div
+    *ngFor="let tableRow of getTableRows(rowLayout)"
+    cdkDropList
+    cdkDropListOrientation="horizontal"
+    [cdkDropListData]="tableRow"
+    (cdkDropListDropped)="reorderDroppedItem($event)"
+  >
+    <!-- drop reorders items and recalculates table matrix-->
+    <div fxFlex="grow" *ngFor="let item of tableRow" cdkDrag>
+      <div class="drag-placeholder" *cdkDragPlaceholder></div>
+      <div fxLayoutAlign="center center" class="item-box">{{ item }}</div>
+    </div>
+  </div>
 </div>
