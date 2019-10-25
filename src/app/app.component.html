@@ -2,17 +2,18 @@
   <h3>Items: {{items}}</h3>
 </div>
 <div #itemRow fxLayout="row wrap" cdkDropListGroup>
+  <!-- creates for each item an dummy div, so-->
 	<div *ngFor="
-            let dummy of ' '.repeat(items.length).split('');
-            let index = index
+            let item of items;
+            let index = index;
          ">
-		<div *ngIf="getTableRow(itemRow, index).length > 0"
+		<div *ngIf="getTableRow(itemRow, index); let tableRow"
          cdkDropList
          cdkDropListOrientation="horizontal"
-			   [cdkDropListData]="getTableRow(itemRow, index)"
+			   [cdkDropListData]="tableRow"
          (cdkDropListDropped)="reorderDroppedItem($event)">
 			<div fxFlex="grow"
-           *ngFor="let item of getTableRow(itemRow, index)" 
+           *ngFor="let item of tableRow" 
            cdkDrag>
 				<div class="drag-placeholder" *cdkDragPlaceholder></div>
         <div fxLayoutAlign="center center" class="item-box">{{item}}</div>

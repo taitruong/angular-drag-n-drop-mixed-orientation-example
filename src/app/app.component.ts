@@ -24,7 +24,6 @@ export class AppComponent {
       }
       return data;
     }
-    return [];
   }
 
   getColumnSize(itemRowElement: Element, index: number): number {
