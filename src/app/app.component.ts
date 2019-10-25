@@ -9,61 +9,58 @@ import { CdkDragDrop, moveItemInArray } from "@angular/cdk/drag-drop";
 export class AppComponent {
   // width 150px + 5px margin
   boxWidth = 155;
-  items: Array<number> = Array.from({length:20}, (v, k) => k + 1);
-  itemTable: Array<number[]> = new Array(this.items.length);
+  items: Array<number> = Array.from({ length: 20 }, (v, k) => k + 1);
+  tableRows: Array<number[]>;
 
-  getTableRow(itemRow: Element, index: number): number[] {
-    const columnSize = this.getColumnSize(itemRow, index);
-    const column = index % columnSize;
-    if (column == 0) {
-      const row = this.getRow(index, columnSize);
-      let data = this.itemTable[row];
-      if (!data) {
-        data = this.items.slice(row * columnSize, (row + 1) * columnSize);
-        this.itemTable[row] = data;
-      }
-      return data;
+  getTableRows(itemRow: Element): number[][] {
+    if (this.tableRows) {
+      return this.tableRows;
     }
-  }
-
-  getColumnSize(itemRowElement: Element, index: number): number {
-    const { width } = itemRowElement.getBoundingClientRect();
+    // calculate column size per row
+    const { width } = itemRow.getBoundingClientRect();
     const columnSize = (width - (width % this.boxWidth)) / this.boxWidth;
-    return columnSize;
-  }
+    // calculate row size: items length / column size
+    const rowSize = +(this.items.length / columnSize).toPrecision(1);
 
-  getRow(index: number, columnSize: number) {
-    const column = index % columnSize;
-    return (index - column) / columnSize;
+    // create table rows
+    const copy = [...this.items];
+    this.tableRows = Array(rowSize)
+      .fill("")
+      .map(_ =>
+        Array(columnSize) // always fills to end of column size, therefore...
+          .fill("")
+          .map(_ => copy.shift())
+          .filter(item => !!item) // ... we need to remove the empty items
+      );
+    return this.tableRows;
   }
 
   reorderDroppedItem(event: CdkDragDrop<number[]>) {
+    // reorder on items array for that we need to calculate items indices
+    // based on indices poiting to rows (data and previous data containers)
     const { previousIndex, currentIndex } = event;
 
+    // get the items from the rows
     const previousRowItem = event.previousContainer.data[previousIndex];
-    const currentRowItem =
-      event.container.data[currentIndex - 1];
+    const currentRowItem = event.container.data[currentIndex - 1]; // currentIndex - 1: when dragging to end of row then current index is equal to row length
 
+    // get item indices based on items
     const previousItemsIndex = this.items.indexOf(previousRowItem);
-    let currentItemsIndex =
-      this.items.indexOf(currentRowItem) + 1;
-    if (
-      previousItemsIndex < currentItemsIndex &&
-      event.previousContainer != event.container
-    ) {
-      currentItemsIndex--;
+    let currentItemsIndex = this.items.indexOf(currentRowItem);
+    // increment in case of same row, keep decremented when in another row
+    if (event.previousContainer == event.container) {
+      currentItemsIndex++;
     }
 
     moveItemInArray(this.items, previousItemsIndex, currentItemsIndex);
 
-    this.updateItemTable();
+    this.updateTableRows();
   }
 
-  updateItemTable() {
+  updateTableRows() {
     let index = 0;
-    this.itemTable = this.itemTable.map(row =>
+    this.tableRows = this.tableRows.map(row =>
       row.map(_ => this.items[index++])
     );
   }
-
 }
