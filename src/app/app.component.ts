@@ -26,11 +26,12 @@ export class AppComponent {
     const copy = [...this.items];
     this.tableRows = Array(rowSize)
       .fill("")
-      .map(_ =>
-        Array(columnSize) // always fills to end of column size, therefore...
-          .fill("")
-          .map(_ => copy.shift())
-          .filter(item => !!item) // ... we need to remove the empty items
+      .map(
+        _ =>
+          Array(columnSize) // always fills to end of column size, therefore...
+            .fill("")
+            .map(_ => copy.shift())
+            .filter(item => !!item) // ... we need to remove the empty items
       );
     return this.tableRows;
   }
@@ -52,7 +53,7 @@ export class AppComponent {
       currentItemsIndex++;
     } else if (previousItemsIndex > currentItemsIndex) {
       // increment in case of different rows AND dragging back (prev > curr), keep decremented when in another row
-    currentItemsIndex++;
+      currentItemsIndex++;
     }
 
     // move item from previous to current index
