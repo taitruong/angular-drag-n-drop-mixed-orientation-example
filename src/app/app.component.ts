@@ -14,21 +14,21 @@ export class AppComponent {
   // width 150px + 5px margin
   boxWidth = 155;
   items: Array<number> = Array.from({ length: 20 }, (v, k) => k + 1);
-  tableRows: Array<number[]>;
+  itemsTable: Array<number[]>;
 
-  getTableRows(itemRow: Element): number[][] {
-    if (this.tableRows) {
-      return this.tableRows;
+  getItemsTable(rowLayout: Element): number[][] {
+    if (this.itemsTable) {
+      return this.itemsTable;
     }
     // calculate column size per row
-    const { width } = itemRow.getBoundingClientRect();
+    const { width } = rowLayout.getBoundingClientRect();
     const columnSize = (width - (width % this.boxWidth)) / this.boxWidth;
     // calculate row size: items length / column size
     const rowSize = +(this.items.length / columnSize).toPrecision(1);
 
     // create table rows
     const copy = [...this.items];
-    this.tableRows = Array(rowSize)
+    this.itemsTable = Array(rowSize)
       .fill("")
       .map(
         _ =>
@@ -37,12 +37,12 @@ export class AppComponent {
             .map(_ => copy.shift())
             .filter(item => !!item) // ... we need to remove empty items
       );
-    return this.tableRows;
+    return this.itemsTable;
   }
 
   reorderDroppedItem(event: CdkDragDrop<number[]>) {
     // clone table, since it needs to be re-initialized after dropping
-    let copyTableRows = this.tableRows.map(_ => _.map(_ => _));
+    let copyTableRows = this.itemsTable.map(_ => _.map(_ => _));
 
     // drop item
     if (event.previousContainer === event.container) {
@@ -61,13 +61,13 @@ export class AppComponent {
     }
 
     // update items after drop
-    this.items = this.tableRows.reduce((previous, current) =>
+    this.items = this.itemsTable.reduce((previous, current) =>
       previous.concat(current)
     );
 
     // re-initialize table
     let index = 0;
-    this.tableRows = copyTableRows.map(row =>
+    this.itemsTable = copyTableRows.map(row =>
       row.map(_ => this.items[index++])
     );
   }
