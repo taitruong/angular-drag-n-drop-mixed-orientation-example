@@ -47,11 +47,15 @@ export class AppComponent {
     // get item indices based on items
     const previousItemsIndex = this.items.indexOf(previousRowItem);
     let currentItemsIndex = this.items.indexOf(currentRowItem);
-    // increment in case of same row, keep decremented when in another row
     if (event.previousContainer == event.container) {
+      // increment in case of same row, keep decremented when in another row
       currentItemsIndex++;
+    } else if (previousItemsIndex > currentItemsIndex) {
+      // increment in case of different rows AND dragging back (prev > curr), keep decremented when in another row
+    currentItemsIndex++;
     }
 
+    // move item from previous to current index
     moveItemInArray(this.items, previousItemsIndex, currentItemsIndex);
 
     this.updateTableRows();
