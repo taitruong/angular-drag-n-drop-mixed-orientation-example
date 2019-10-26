@@ -22,9 +22,9 @@ export class AppComponent {
     }
     // calculate column size per row
     const { width } = rowLayout.getBoundingClientRect();
-    const columnSize = (width - (width % this.boxWidth)) / this.boxWidth;
+    const columnSize = Math.round(width / this.boxWidth);
     // calculate row size: items length / column size
-    const rowSize = +(this.items.length / columnSize).toPrecision(1);
+    const rowSize = Math.round(this.items.length / columnSize);
 
     // create table rows
     const copy = [...this.items];
