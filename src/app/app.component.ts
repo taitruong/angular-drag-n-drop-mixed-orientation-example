@@ -13,7 +13,7 @@ import {
 export class AppComponent {
   // width 150px + 5px margin
   boxWidth = 155;
-  items: Array<number> = Array.from({ length: 20 }, (v, k) => k + 1);
+  items: Array<number> = Array.from({ length: 21 }, (v, k) => k + 1);
   itemsTable: Array<number[]>;
 
   getItemsTable(rowLayout: Element): number[][] {
@@ -24,7 +24,8 @@ export class AppComponent {
     const { width } = rowLayout.getBoundingClientRect();
     const columnSize = Math.round(width / this.boxWidth);
     // calculate row size: items length / column size
-    const rowSize = Math.round(this.items.length / columnSize);
+    // add 0.5: round up so that last element is shown in next row
+    const rowSize = Math.round(this.items.length / columnSize + .5);
 
     // create table rows
     const copy = [...this.items];
