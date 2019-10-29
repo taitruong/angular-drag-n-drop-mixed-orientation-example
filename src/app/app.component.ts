@@ -34,26 +34,19 @@ export class AppComponent {
   }
 
   initTable() {
-    // calculate row size: items length / column size
-    // add 0.5: round up so that last element is shown in next row
-    const rowSize = Math.round(this.items.length / this.columnSize + 0.5);
-
     // create table rows based on input list
     // example: [1,2,3,4,5,6] => [ [1,2,3], [4,5,6] ]
-    const clonedItemsList = [...this.items];
-    this.itemsTable = Array(rowSize) // table: outter list
-      .fill("") // fill with empty values and ...
-      .map(
-        // ...map with new rows
-        (
-          _ // row: inner list - fill row with articles from cloned list
-        ) =>
-          Array(this.columnSize) // always fills to end of column size, therefore...
-            .fill("")
-            .map(_ => clonedItemsList.shift())
-            .filter(item => !!item) // ... we need to remove empty items
+    this.itemsTable = this.items
+      .filter((_, outerIndex) => outerIndex % this.columnSize == 0) // create outter list of rows
+      .map((
+        _,
+        rowIndex // fill each row from...
+      ) =>
+        this.items.slice(
+          rowIndex * this.columnSize, // ... row start and
+          rowIndex * this.columnSize + this.columnSize // ...row end
+        )
       );
-    return this.itemsTable;
   }
 
   reorderDroppedItem(event: CdkDragDrop<number[]>) {
@@ -76,8 +69,9 @@ export class AppComponent {
 
     // update items after drop: flatten matrix into list
     // example: [ [1,2,3], [4,5,6] ] => [1,2,3,4,5,6]
-    this.items = this.itemsTable.reduce((previous, current) =>
-      previous.concat(current)
+    this.items = this.itemsTable.reduce(
+      (previous, current) => previous.concat(current),
+      []
     );
 
     // re-initialize table - makes sure each row has same numbers of entries
