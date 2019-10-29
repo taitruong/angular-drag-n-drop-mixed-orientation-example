@@ -1,17 +1,61 @@
 <div fxLayout="row">
-  <h3>Items: {{ items }}</h3>
+  <h3>Items Input Model: {{ items }}</h3>
 </div>
-<div #rowLayout fxLayout="row wrap" cdkDropListGroup>
-  <!-- based on row layout's width and item box width, columns per row can be calculated and a items table matrix is initialized-->
+<!-- This doesn't work -->
+<h3>
+  Before: a template with flex row wrap using an input model displaying a list
+  of items
+</h3>
+<p>
+  Starting point is a template with logically one flex row wrap that spans over
+  multiple lines resp. physical rows. The list of items (input model) is wrapped
+  over these lines.
+</p>
+<div>
+  The problem is that Angular's Drag and Drop can't be used here, since it deals
+  either with a horizontal or vertical direction - but not with both
+  orientations!
+</div>
+<div fxLayout="row wrap" cdkDropList>
+  <div *ngFor="let item of items" cdkDrag>
+    <div class="drag-placeholder" *cdkDragPlaceholder></div>
+    <div fxLayoutAlign="center center" class="item-box">{{ item }}</div>
+  </div>
+</div>
+<!-- This works-->
+<h3>
+  After: a template with flex row using a view model displaying rows of list
+  items
+</h3>
+<p>
+  This template defines a simple flex row with a static behavior using table as
+  view model. This table provides a 'fixed' number of rows and columns. The
+  dynamic part itself is separated and taken care of the component's
+  getItemsTable() method.
+</p>
+<div>
+  Here it can group each row logically together using Angular's cdkDropListGroup
+  directive. Dragging and dropping is handled by Angular's CDK functions in two
+  ways:
+  <ul>
+    <li>moveItemInArray(): when dropping an item within the same row</li>
+    <li>transferArrayItem(): when dropping an item into another row</li>
+  </ul>
+</div>
+<div #rowLayout cdkDropListGroup>
+  <!-- Based on the width of template reference #rowLayout' and item box width,
+       columns per row can be calculated and a items table matrix is initialized-->
   <div
+    fxLayout="row"
     *ngFor="let itemsRow of getItemsTable(rowLayout)"
     cdkDropList
     cdkDropListOrientation="horizontal"
     [cdkDropListData]="itemsRow"
     (cdkDropListDropped)="reorderDroppedItem($event)"
   >
-    <!-- drop reorders items and recalculates table matrix-->
-    <div fxFlex="grow" *ngFor="let item of itemsRow" cdkDrag>
+    <!-- Component.reorderDroppedItem():
+         reorders table/view model, update input model, and resize table matrix-->
+    <div *ngFor="let item of itemsRow" cdkDrag>
       <div class="drag-placeholder" *cdkDragPlaceholder></div>
       <div fxLayoutAlign="center center" class="item-box">{{ item }}</div>
     </div>
