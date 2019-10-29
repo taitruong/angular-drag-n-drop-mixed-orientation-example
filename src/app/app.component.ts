@@ -11,41 +11,53 @@ import {
   styleUrls: ["./app.component.css"]
 })
 export class AppComponent {
-  // width 150px + 5px margin
-  boxWidth = 155;
+  // one dimensional input model
   items: Array<number> = Array.from({ length: 21 }, (v, k) => k + 1);
+  // two dimensional table matrix representing view model
   itemsTable: Array<number[]>;
 
+  // fix column width as defined in CSS (150px + 5px margin)
+  boxWidth = 155;
+  // calculated based on dynamic row width
+  columnSize: number;
+
   getItemsTable(rowLayout: Element): number[][] {
-    if (this.itemsTable) {
-      return this.itemsTable;
-    }
     // calculate column size per row
     const { width } = rowLayout.getBoundingClientRect();
     const columnSize = Math.round(width / this.boxWidth);
+    // view has been resized? => update table with new column size
+    if (columnSize != this.columnSize) {
+      this.columnSize = columnSize;
+      this.initTable();
+    }
+    return this.itemsTable;
+  }
+
+  initTable() {
     // calculate row size: items length / column size
     // add 0.5: round up so that last element is shown in next row
-    const rowSize = Math.round(this.items.length / columnSize + .5);
+    const rowSize = Math.round(this.items.length / this.columnSize + 0.5);
 
-    // create table rows
-    const copy = [...this.items];
-    this.itemsTable = Array(rowSize)
-      .fill("")
+    // create table rows based on input list
+    // example: [1,2,3,4,5,6] => [ [1,2,3], [4,5,6] ]
+    const clonedItemsList = [...this.items];
+    this.itemsTable = Array(rowSize) // table: outter list
+      .fill("") // fill with empty values and ...
       .map(
-        _ =>
-          Array(columnSize) // always fills to end of column size, therefore...
+        // ...map with new rows
+        (
+          _ // row: inner list - fill row with articles from cloned list
+        ) =>
+          Array(this.columnSize) // always fills to end of column size, therefore...
             .fill("")
-            .map(_ => copy.shift())
+            .map(_ => clonedItemsList.shift())
             .filter(item => !!item) // ... we need to remove empty items
       );
     return this.itemsTable;
   }
 
   reorderDroppedItem(event: CdkDragDrop<number[]>) {
-    // clone table, since it needs to be re-initialized after dropping
-    let copyTableRows = this.itemsTable.map(_ => _.map(_ => _));
-
-    // drop item
+    // same row/container? => move item in same row
     if (event.previousContainer === event.container) {
       moveItemInArray(
         event.container.data,
@@ -53,6 +65,7 @@ export class AppComponent {
         event.currentIndex
       );
     } else {
+      // different rows? => transfer item from one to another list
       transferArrayItem(
         event.previousContainer.data,
         event.container.data,
@@ -61,15 +74,14 @@ export class AppComponent {
       );
     }
 
-    // update items after drop
+    // update items after drop: flatten matrix into list
+    // example: [ [1,2,3], [4,5,6] ] => [1,2,3,4,5,6]
     this.items = this.itemsTable.reduce((previous, current) =>
       previous.concat(current)
     );
 
-    // re-initialize table
-    let index = 0;
-    this.itemsTable = copyTableRows.map(row =>
-      row.map(_ => this.items[index++])
-    );
+    // re-initialize table - makes sure each row has same numbers of entries
+    // example: [ [1,2], [3,4,5,6] ] => [ [1,2,3], [4,5,6] ]
+    this.initTable();
   }
 }
